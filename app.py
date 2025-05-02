@@ -39,7 +39,7 @@ def init_config():
     global apps
     file_config = os.getenv("WEBHOOK_CONFIG_FILE", default=os.path.join(os.getcwd(),"deploy.yaml"))
 
-    if not os.getenv("APP_TOKEN"):
+    if not os.getenv("WEBHOOK_APP_TOKEN"):
         print("Secret token not configured")
         exit(-1)
 
@@ -56,7 +56,7 @@ def init_config():
     apps = configs.get("application")
 
 def validate_token(authorization: Optional[str] = Header(None)):
-    if authorization is None or authorization != "Bearer " + os.getenv("WEBHOOK_CONFIG_FILE"):
+    if authorization is None or authorization != "Bearer " + os.getenv("WEBHOOK_APP_TOKEN"):
         raise HTTPException(status_code=401, detail="Invalid or missing token")
     return authorization
 
