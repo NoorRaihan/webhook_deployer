@@ -1,0 +1,6 @@
+application:
+
+  app1:
+    deploy-command:
+      - "ls"
+      - "lslslslls"
