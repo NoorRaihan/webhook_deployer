@@ -83,7 +83,8 @@ async def deploy_app(request: Request, token: str = Depends(validate_token)):
     if data.get("type") != "PUSH_ARTIFACT":
         return JSONResponse(status_code=200, content={"message": "ignored"})
     
-    resources = data.get("event_data").get("resources")[0]
+    events = data.get("event_data")
+    resources = events.get("resources")[0]
 
     if resources.get("tag") != "latest":
         return JSONResponse(status_code=200, content={"message": "tag not latest, ignored"})
@@ -93,7 +94,7 @@ async def deploy_app(request: Request, token: str = Depends(validate_token)):
         "REGISTRY_URL": resources.get("resource_url")
     }
 
-    app_id = apps.get(data.get("repository").get("name"))
+    app_id = apps.get(events.get("repository").get("name"))
     if not app_id:
         return JSONResponse(status_code=404, content={"message": f"{app_id} does not found in the configuration"})
     
