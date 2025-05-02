@@ -1,6 +1,6 @@
 application:
 
-  app1:
+  pwn:
     deploy-command:
       - "ls"
       - "lslslslls"
