@@ -93,10 +93,8 @@ async def deploy_app(app_id: str, request: Request, token: str = Depends(validat
         "REGISTRY_URL": resources.get("resource_url")
     }
 
+    app_id = apps.get(data.get("repository").get("name"))
     if not app_id:
-        return JSONResponse(status_code=500, content={"message": "app_id is required"})
-    
-    if not apps.get(app_id):
         return JSONResponse(status_code=404, content={"message": f"{app_id} does not found in the configuration"})
     
     result = run_deploy_command(replace_placeholders(apps.get(app_id).get("deploy-command"), **kwargs))
