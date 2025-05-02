@@ -75,8 +75,8 @@ def replace_placeholders(arr, **kwargs):
             result.append(item)
     return result
 
-@app.post("/webhook/deploy/{app_id}")
-async def deploy_app(app_id: str, request: Request, token: str = Depends(validate_token)):
+@app.post("/webhook/deploy")
+async def deploy_app(request: Request, token: str = Depends(validate_token)):
     data = await request.json()
     print(data)
 
