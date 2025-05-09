@@ -2,5 +2,5 @@ application:
 
   pwn:
     deploy-command:
-      - "ls"
-      - "lslslslls"
+      - "./deploy.sh"
+      - "1.0.0"
