@@ -6,6 +6,7 @@ import os
 from cerberus import Validator
 from typing import Optional
 import subprocess
+import re
 
 app = FastAPI()
 apps = {}
@@ -60,7 +61,7 @@ def validate_token(authorization: Optional[str] = Header(None)):
         raise HTTPException(status_code=401, detail="Invalid or missing token")
     return authorization
 
-def replace_placeholders(arr, **kwargs):
+def replace_placeholders(arr, data):
     result = []
     pattern = re.compile(r'\$([a-zA-Z_]\w*)')
 
@@ -68,7 +69,7 @@ def replace_placeholders(arr, **kwargs):
         if isinstance(item, str):
             def replacer(match):
                 key = match.group(1)
-                return str(kwargs.get(key, match.group(0)))
+                return str(data.get(key, match.group(0)))
             new_item = pattern.sub(replacer, item)
             result.append(new_item)
         else:
@@ -86,19 +87,20 @@ async def deploy_app(request: Request, token: str = Depends(validate_token)):
     events = data.get("event_data")
     resources = events.get("resources")[0]
 
-    if resources.get("tag") != "latest":
-        return JSONResponse(status_code=200, content={"message": "tag not latest, ignored"})
+    # if resources.get("tag") != "latest":
+    #     return JSONResponse(status_code=200, content={"message": "tag not latest, ignored"})
     
-    kwargs = {
-        "TAG" : "latest",
+    data = {
+        "TAG" : resources.get("tag"),
         "REGISTRY_URL": resources.get("resource_url")
     }
 
-    app_id = apps.get(events.get("repository").get("name"))
-    if not app_id:
+    app_id = events.get("repository").get("repo_full_name")
+    app_conf = apps.get(app_id)
+    if not app_conf:
         return JSONResponse(status_code=404, content={"message": f"{app_id} does not found in the configuration"})
     
-    result = run_deploy_command(replace_placeholders(apps.get(app_id).get("deploy-command"), **kwargs))
+    result = run_deploy_command(replace_placeholders(app_conf.get("deploy-command"), data))
     if not result or result.returncode != 0:
         return JSONResponse(status_code=500, content={"message": f"Failed to trigger deploy command for {app_id}"})
     
