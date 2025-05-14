@@ -82,17 +82,12 @@ Example Payload:
 🔐 Only events of type PUSH_ARTIFACT are processed.
 
 🧠 How It Works
-Validates token using Bearer authentication.
-
-Parses the incoming JSON for PUSH_ARTIFACT.
-
-Looks up the associated application in deploy.yaml.
-
-Substitutes placeholders like $TAG and $REGISTRY_URL.
-
-Executes the shell command for deployment.
-
-Returns a success or failure response.
+1. Validates token using Bearer authentication.
+2. Parses the incoming JSON for PUSH_ARTIFACT.
+3. Looks up the associated application in deploy.yaml.
+4. Substitutes placeholders like $TAG and $REGISTRY_URL.
+5. Executes the shell command for deployment.
+6. Returns a success or failure response.
 
 🧪 Example Test with curl
 ```bash
